@@ -1,0 +1,71 @@
+function SlideVisited(pag) {
+	var result_status=lmsAPI.GetStatus();
+	parent.WriteToDebug(" -- LMS.js: Status " + result_status);
+
+    if ( result_status != lmsAPI.LESSON_STATUS_COMPLETED) {
+        var player = GetPlayer();
+        var totalSlides = player.GetVar("totalSlides");
+
+        parent.WriteToDebug(" -- LMS.js: PaginaVisitada " + pag);
+
+        //LEER LESSON_LOCATION
+        var result_Bookmark = lmsAPI.GetBookmark();
+
+
+        if (result_Bookmark.indexOf(pag + "|") == -1) {
+            var new_Bookmark = pag + "|" + result_Bookmark;
+
+            //GRABAR LESSON_LOCATION
+            result_Bookmark = lmsAPI.SetBookmark(new_Bookmark);
+
+
+
+            //GRABAR PROGRESO
+            numberSlides = new_Bookmark.split("|").length - 1;
+
+            var score = lmsAPI.GetScore();
+            parent.WriteToDebug(" -- LMS.js: Score " + score);
+            var newScore = Math.round((numberSlides * 100) / totalSlides);
+            if (newScore > score) {
+                var return_score = lmsAPI.SetScore(newScore, 0, 100);
+
+                if(newScore==100){
+                   SetStatus("completed");
+                }
+            }
+
+        }
+        //GRABAR CAMBIOS
+        var result_commit = LMSCommit();
+        parent.WriteToDebug(" -- LMS.js: Commit " + result_commit);
+    } else {
+        parent.WriteToDebug(" -- LMS.js: Status completed ");
+    }
+
+
+}
+
+function cerrarCurso() {
+    parent.WriteToDebug(" -- LMS.js: cerrarCurso " + pag);
+
+    //GRABAR CAMBIOS
+    var result_commit = LMSCommit();
+    top.close();
+
+}
+
+//COMPRESS
+
+function SlideVisited(t){var e=lmsAPI.GetStatus();if(e!=lmsAPI.LESSON_STATUS_COMPLETED){var S=GetPlayer(),l=S.GetVar("totalSlides"),a=lmsAPI.GetBookmark();if(-1==a.indexOf(t+"|")){var m=t+"|"+a;a=lmsAPI.SetBookmark(m);var o=m.split("|").length-1,r=lmsAPI.GetScore(),s=Math.round(100*o/l);s>r&&(lmsAPI.SetScore(s,0,100),100==s&&SetStatus("completed"))}LMSCommit()}}
+
+
+
+//-------
+
+//DENTRO DE STORY
+var progreso=100;
+var forzarCompletado=true;
+
+
+/* NO TOCAR*/
+if(lmsAPI.GetStatus()!=lmsAPI.LESSON_STATUS_COMPLETED){var val=lmsAPI.SetScore(progreso,100,0);100==progreso&&forzarCompletado&&SetStatus("completed")}LMSCommit();
